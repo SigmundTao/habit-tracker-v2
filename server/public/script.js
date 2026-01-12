@@ -1,45 +1,52 @@
-const habitDisplay = document.getElementById('habit-display');
+const habitsContainerEl = document.getElementById('habit-display');
 const addHabitBtn = document.getElementById('add-habit-btn');
-const addHabitDialog = document.getElementById('add-habit-dialog');
+const addHabitDialogEl = document.getElementById('add-habit-dialog');
 const closeDialogBtn = document.getElementById('close-dialog-btn');
 const saveHabitBtn = document.getElementById('save-habit-btn');
 
-async function loadHabits() {
+function renderHabitList(habits) {
+    habitsContainerEl.innerHTML = ``;
+    habits.forEach(habit => {
+        const element = new HabitCard(habit);
+        element.renderInto(habitsContainerEl)
+    });
+}
+
+async function fetchHabits() {
     const res = await fetch('/api/habits');
     const habits = await res.json();
 
     console.log(habits);
-    renderHabits(habits)
+    renderHabitList(habits)
 }
 
-async function renderHabits(habits) {
-    habitDisplay.innerHTML = ``;
-    habits.forEach(habit => {
-        const element = new Habit(habit);
-        element.render()
-    });
-}
-
-async function addHabit(habit) {
-    fetch('/api/habits', {
+async function createHabit(habit) {
+    await fetch('/api/habits', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ name: `${habit}` })
     })
+
+    fetchHabits()
 }
 
-async function deleteHabit() {
-    
+async function deleteHabitById(id) {
+    await fetch(`/api/habits/${id}`, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+    })
+
+    fetchHabits()
 }
 
-class Habit {
+class HabitCard {
     constructor(obj){
         this.name = obj.name;
         this.created_at = obj.created_at;
         this.id = obj.id
     }
 
-    render(){
+    renderInto(containerEl){
         const element = document.createElement('div');
         element.classList.add('habit-card');
 
@@ -55,15 +62,19 @@ class Habit {
         element.appendChild(title);
         element.appendChild(date);
         element.appendChild(removeBtn);
-        habitDisplay.appendChild(element);
+        containerEl.appendChild(element);
+
+        removeBtn.addEventListener('click', () => {
+            deleteHabitById(this.id);
+        })
     }
 }
 
-addHabitBtn.addEventListener('click', () => addHabitDialog.show());
-closeDialogBtn.addEventListener('click', () => addHabitDialog.close());
+addHabitBtn.addEventListener('click', () => addHabitDialogEl.showModal());
+closeDialogBtn.addEventListener('click', () => addHabitDialogEl.close());
 saveHabitBtn.addEventListener('click', () => {
-    addHabit(document.getElementById('add-habit-input').textContent);
-    addHabitDialog.close()
+    createHabit(document.getElementById('add-habit-input').value.trim());
+    addHabitDialogEl.close()
 })
 
-loadHabits()
+fetchHabits()
