@@ -83,7 +83,6 @@ app.delete('/api/habits/:id', async (req, res) => {
       return res.status(400).json({ error: 'Invalid id' });
     }
 
-    // fetch it first so we can return the deleted record
     const habit = await db.get(
       "SELECT id, name, created_at FROM habits WHERE id = ?",
       [id]

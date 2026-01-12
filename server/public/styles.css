@@ -1,9 +1,36 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     background-color: blue;
 }
 
-dialog {
-    height: 50vh;
-    width: 50vw;
+.habit-card {
+    border: 1px solid black;
+    background-color: aliceblue;
+    border-radius: 15px;
+    padding: 15px;
 }
 
+#habit-display {
+    border: 3px solid pink;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+}
+
+#add-habit-btn {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    height: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+}

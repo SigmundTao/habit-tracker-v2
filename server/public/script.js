@@ -50,7 +50,7 @@ class HabitCard {
         const element = document.createElement('div');
         element.classList.add('habit-card');
 
-        const title = document.createElement('p');
+        const title = document.createElement('h3');
         title.textContent = this.name;
 
         const date = document.createElement('p')
