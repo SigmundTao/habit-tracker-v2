@@ -1,4 +1,8 @@
-let habits = [];
+let habits = [
+  { id: 1, name: 'Climb' },
+  { id: 2, name: 'Code' }
+];
+
 let nextId = 1;
 
 const express = require('express');
@@ -25,6 +29,7 @@ app.get('/api/habits', (req, res) => {
   res.json(habits);
 });
 
+//create habit
 app.post('/api/habits', (req, res) => {
   const { name } = req.body;
 
@@ -41,6 +46,21 @@ app.post('/api/habits', (req, res) => {
   habits.push(habit);
   res.status(201).json(habit);
 });
+
+// Delete habit
+app.delete('/api/habits/:id', (req, res) => {
+  const id = Number(req.params.id)
+
+  if (Number.isNaN(id)){
+    return res.status(400).json({erro: 'Invalid id'});
+  }
+
+  const index = habits.findIndex(habit => habit.id === id);
+
+  const deleted = habits.splice(index, 1)[0];
+
+  res.json(deleted);
+})
 
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`);
