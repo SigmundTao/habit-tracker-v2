@@ -2,6 +2,7 @@ const habitDisplay = document.getElementById('habit-display');
 const addHabitBtn = document.getElementById('add-habit-btn');
 const addHabitDialog = document.getElementById('add-habit-dialog');
 const closeDialogBtn = document.getElementById('close-dialog-btn');
+const saveHabitBtn = document.getElementById('save-habit-btn');
 
 async function loadHabits() {
     const res = await fetch('/api/habits');
@@ -14,26 +15,20 @@ async function loadHabits() {
 async function renderHabits(habits) {
     habitDisplay.innerHTML = ``;
     habits.forEach(habit => {
-        createHabitCard(habit, habitDisplay);
+        const element = new Habit(habit);
+        element.render()
     });
 }
 
-function createHabitCard(habit, holder){
-    const card = document.createElement('div');
-    
-    const title = document.createElement('p');
-    title.textContent = habit.name;
-
-    const date = document.createElement('p')
-    date.textContent = habit.created_at.split(' ')[0];
-
-    card.appendChild(title);
-    card.appendChild(date);
-
-    holder.appendChild(card)
+async function addHabit(habit) {
+    fetch('/api/habits', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name: `${habit}` })
+    })
 }
 
-async function addHabit() {
+async function deleteHabit() {
     
 }
 
@@ -46,6 +41,7 @@ class Habit {
 
     render(){
         const element = document.createElement('div');
+        element.classList.add('habit-card');
 
         const title = document.createElement('p');
         title.textContent = this.name;
@@ -59,10 +55,15 @@ class Habit {
         element.appendChild(title);
         element.appendChild(date);
         element.appendChild(removeBtn);
+        habitDisplay.appendChild(element);
     }
 }
 
 addHabitBtn.addEventListener('click', () => addHabitDialog.show());
 closeDialogBtn.addEventListener('click', () => addHabitDialog.close());
+saveHabitBtn.addEventListener('click', () => {
+    addHabit(document.getElementById('add-habit-input').textContent);
+    addHabitDialog.close()
+})
 
 loadHabits()
